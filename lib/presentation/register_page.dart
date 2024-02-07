@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:samble_registrasi/bloc/register/register_bloc.dart';
+import 'package:samble_registrasi/data/models/request/register_request_model.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -7,13 +10,36 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-TextEditingController? nameController;
-TextEditingController? usernameController;
-TextEditingController? passwordController;
-TextEditingController? repasswordController;
-TextEditingController? phoneController;
-
 class _RegisterPageState extends State<RegisterPage> {
+  TextEditingController? namaController;
+  TextEditingController? usernameController;
+  TextEditingController? emailController;
+  TextEditingController? passwordController;
+  TextEditingController? repasswordController;
+  TextEditingController? phoneController;
+
+  @override
+  void initState() {
+    namaController = TextEditingController();
+    usernameController = TextEditingController();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    repasswordController = TextEditingController();
+    phoneController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    namaController!.dispose();
+    usernameController!.dispose();
+    emailController!.dispose();
+    passwordController!.dispose();
+    repasswordController!.dispose();
+    phoneController!.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,28 +58,53 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(
               height: 16,
             ),
-            const TextField(
-              decoration: InputDecoration(labelText: "Name"),
+            TextField(
+              controller: namaController,
+              decoration: const InputDecoration(labelText: "Name"),
             ),
-            const TextField(
-              decoration: InputDecoration(labelText: "Username"),
+            TextField(
+              controller: usernameController,
+              decoration: const InputDecoration(labelText: "Username"),
             ),
-            const TextField(
-              decoration: InputDecoration(labelText: "Email"),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Email"),
             ),
-            const TextField(
-              decoration: InputDecoration(labelText: "Password"),
+            TextField(
+              obscureText: true,
+              controller: passwordController,
+              decoration: const InputDecoration(labelText: "Password"),
             ),
-            const TextField(
-              decoration: InputDecoration(labelText: "Konfirmasi Password"),
+            TextField(
+              obscureText: true,
+              controller: repasswordController,
+              decoration:
+                  const InputDecoration(labelText: "Konfirmasi Password"),
             ),
-            const TextField(
-              decoration: InputDecoration(labelText: "No Hp"),
+            TextField(
+              controller: phoneController,
+              decoration: const InputDecoration(labelText: "No Hp"),
             ),
             const SizedBox(
               height: 10,
             ),
-            ElevatedButton(onPressed: () {}, child: const Text("Register"))
+            ElevatedButton(
+                onPressed: () {
+                  final requestModel = RegisterRequestModel(
+                    nama: namaController!.text,
+                    username: usernameController!.text,
+                    email: emailController!.text,
+                    password: passwordController!.text,
+                    repassword: repasswordController!.text,
+                    phone: phoneController!.text,
+                  );
+                  context.read<RegisterBloc>().add(
+                        DoRegisterEvent(
+                          model: requestModel,
+                        ),
+                      );
+                },
+                child: const Text("Register"))
           ],
         ),
       ),
